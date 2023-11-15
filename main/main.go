@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"server/handlers"
+	"server/handlers/users"
 
 	"github.com/go-chi/chi"
 	"github.com/jackc/pgx/v4"
@@ -29,15 +29,15 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	handlers.Conn = conn
+	users.Conn = conn
 
 	r := chi.NewRouter()
-	r.Get("/users", handlers.GetUsers)
-	r.Get("/users/{id}", handlers.GetUserByID)
-	r.Post("/users", handlers.CreateUser)
-	r.Patch("/users/{id}", handlers.UpdateUser)
-	r.Put("/users/{id}", handlers.CreateUser)
-	r.Delete("/users/{id}", handlers.DeleteUser)
+	r.Get("/users", users.GetUsers)
+	r.Get("/users/{id}", users.GetUserByID)
+	r.Post("/users", users.CreateUser)
+	r.Patch("/users/{id}", users.UpdateUser)
+	r.Put("/users/{id}", users.CreateUser)
+	r.Delete("/users/{id}", users.DeleteUser)
 
 	log.Println("Server is running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
