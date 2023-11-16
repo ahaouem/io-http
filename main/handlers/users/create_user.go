@@ -22,6 +22,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
         Lastname: lastname,
     }
 
+    
     _, err := Conn.Exec(context.Background(), "INSERT INTO users (name, lastname) VALUES ($1, $2) RETURNING id, name, lastname", user.Name, user.Lastname)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
