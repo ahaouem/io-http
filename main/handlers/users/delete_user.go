@@ -10,6 +10,10 @@ import (
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
     id := chi.URLParam(r, "id")
+    if id == "" {
+        http.Error(w, "ID was not provided ", http.StatusBadRequest)
+        return
+    }
     userID, err := strconv.Atoi(id)
     if err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)

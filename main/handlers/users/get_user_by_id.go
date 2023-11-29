@@ -11,6 +11,10 @@ import (
 
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
     id := chi.URLParam(r, "id")
+    if id == "" {
+        http.Error(w, "ID was not provided ", http.StatusBadRequest)
+        return
+    }
     userID, _ := strconv.Atoi(id)
     var user User
     err := Conn.QueryRow(context.Background(), "SELECT id, name, lastname FROM users WHERE id = $1", userID).

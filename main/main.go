@@ -34,9 +34,9 @@ func main() {
 	r := chi.NewRouter()
 	r.Get("/users", users.GetUsers)
 	r.Get("/users/{id}", users.GetUserByID)
-	r.Post("/users", users.CreateUser)
+	r.Post("/users", users.CreateUserOrUpdate)
 	r.Patch("/users/{id}", users.UpdateUser)
-	r.Put("/users/{id}", users.CreateUser)
+	r.Put("/users/{id}", users.CreateUserOrUpdate)
 	r.Delete("/users/{id}", users.DeleteUser)
 
 	log.Println("Server is running on http://localhost:8080")
