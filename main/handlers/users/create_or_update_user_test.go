@@ -12,35 +12,48 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createUserOrUpdateRouter() *chi.Mux {
-    r := chi.NewRouter()
-    r.Post("/users/{id}", CreateUserOrUpdate)
-    return r
+func testRouterForCreateOrUpdateUser() *chi.Mux {
+	r := chi.NewRouter()
+	r.Post("/users/{id}", CreateUserOrUpdate)
+	r.Put("/users/{id}", CreateUserOrUpdate)
+	return r
 }
 
-func TestCreateUserOrUpdate_Create(t *testing.T) {
-    router := createUserOrUpdateRouter()
-    newUser := User{
-        Name:     "New User",
-        Lastname: "Test",
-    }
-    newUserBytes, _ := json.Marshal(newUser)
-    req, _ := http.NewRequest("POST", "/users", bytes.NewBuffer(newUserBytes))
-    rr := httptest.NewRecorder()
-    router.ServeHTTP(rr, req)
-    assert.Equal(t, http.StatusCreated, rr.Code)
+func TestCreateUserWithPost(t *testing.T) {
+	router := testRouterForCreateOrUpdateUser()
+
+	userInput := User{Name: "New", Lastname: "User"}
+	userInputBytes, _ := json.Marshal(userInput)
+	req, _ := http.NewRequest("POST", "/users/60", bytes.NewBuffer(userInputBytes)) 
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusCreated, rr.Code)
 }
 
-func TestCreateUserOrUpdate_Update(t *testing.T) {
-    router := createUserOrUpdateRouter()
-    userID := 41
-    updatedUser := User{
-        Name:     "Updated User",
-        Lastname: "Test",
-    }
-    updatedUserBytes, _ := json.Marshal(updatedUser)
-    req, _ := http.NewRequest("POST", "/users/"+strconv.Itoa(userID), bytes.NewBuffer(updatedUserBytes))
-    rr := httptest.NewRecorder()
-    router.ServeHTTP(rr, req)
-    assert.Equal(t, http.StatusNoContent, rr.Code)
+func TestUpdateUserWithPut(t *testing.T) {
+	router := testRouterForCreateOrUpdateUser()
+
+	validUserID := 42 
+	userInput := User{Name: "Updated", Lastname: "User"}
+	userInputBytes, _ := json.Marshal(userInput)
+	req, _ := http.NewRequest("PUT", "/users/"+strconv.Itoa(validUserID), bytes.NewBuffer(userInputBytes))
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusNoContent, rr.Code)
+}
+
+
+func TestBadUpdateUserWithPut(t *testing.T) {
+	router := testRouterForCreateOrUpdateUser()
+
+	validUserID := 1
+	userInput := User{Name: "Updated", Lastname: "User"}
+	userInputBytes, _ := json.Marshal(userInput)
+	req, _ := http.NewRequest("PUT", "/users/"+strconv.Itoa(validUserID), bytes.NewBuffer(userInputBytes))
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
 }
