@@ -60,7 +60,7 @@ func TestBadUpdateUserWithPut(t *testing.T) {
 }
 
 
-func TestCreateUserOrUpdateCreate(t *testing.T) {
+func TestUnitCreateUserOrUpdateCreate(t *testing.T) {
 	userInput := User{Name: "New", Lastname: "User"}
 	userInputBytes, _ := json.Marshal(userInput)
 	req, _ := http.NewRequest("POST", "/users/0", bytes.NewBuffer(userInputBytes))
@@ -75,7 +75,7 @@ func TestCreateUserOrUpdateCreate(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, rr.Code)
 }
 
-func TestCreateUserOrUpdateUpdate(t *testing.T) {
+func TestUnitCreateUserOrUpdateUpdate(t *testing.T) {
 	validUserID := 42
 	userInput := User{Name: "Updated", Lastname: "User"}
 	userInputBytes, _ := json.Marshal(userInput)
