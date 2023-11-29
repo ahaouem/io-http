@@ -2,6 +2,7 @@ package users
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -56,4 +57,37 @@ func TestBadUpdateUserWithPut(t *testing.T) {
 	router.ServeHTTP(rr, req)
 
 	assert.Equal(t, http.StatusBadRequest, rr.Code)
+}
+
+
+func TestCreateUserOrUpdateCreate(t *testing.T) {
+	userInput := User{Name: "New", Lastname: "User"}
+	userInputBytes, _ := json.Marshal(userInput)
+	req, _ := http.NewRequest("POST", "/users/0", bytes.NewBuffer(userInputBytes))
+	rr := httptest.NewRecorder()
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", "0")
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+	CreateUserOrUpdate(rr, req)
+
+	assert.Equal(t, http.StatusCreated, rr.Code)
+}
+
+func TestCreateUserOrUpdateUpdate(t *testing.T) {
+	validUserID := 42
+	userInput := User{Name: "Updated", Lastname: "User"}
+	userInputBytes, _ := json.Marshal(userInput)
+	req, _ := http.NewRequest("PUT", "/users/"+strconv.Itoa(validUserID), bytes.NewBuffer(userInputBytes))
+	rr := httptest.NewRecorder()
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", strconv.Itoa(validUserID))
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+
+	CreateUserOrUpdate(rr, req)
+
+	assert.Equal(t, http.StatusNoContent, rr.Code)
 }

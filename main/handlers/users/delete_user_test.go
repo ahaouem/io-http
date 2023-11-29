@@ -1,6 +1,7 @@
 package users
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -27,23 +28,29 @@ func TestDeleteUserSuccess(t *testing.T) {
 	assert.Equal(t, http.StatusNoContent, rr.Code)
 }
 
-func TestDeleteUserInvalidID(t *testing.T) {
-	router := testRouterForDeleteUser()
-
-	req, _ := http.NewRequest("DELETE", "/users/invalidID", nil)
+func TestGetUserByIDInvalidID(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/users/invalidID", nil)
 	rr := httptest.NewRecorder()
-	router.ServeHTTP(rr, req)
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", "invalidID")
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+	GetUserByID(rr, req)
 
 	assert.Equal(t, http.StatusBadRequest, rr.Code)
 }
 
-func TestDeleteUserNonExistentUser(t *testing.T) {
-	router := testRouterForDeleteUser()
-
+func TestGetUserByIDNonExistentUser(t *testing.T) {
 	nonExistentUserID := 999
-	req, _ := http.NewRequest("DELETE", "/users/"+strconv.Itoa(nonExistentUserID), nil)
+	req, _ := http.NewRequest("GET", "/users/"+strconv.Itoa(nonExistentUserID), nil)
 	rr := httptest.NewRecorder()
-	router.ServeHTTP(rr, req)
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", strconv.Itoa(nonExistentUserID))
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+	GetUserByID(rr, req)
 
 	assert.Equal(t, http.StatusNotFound, rr.Code)
 }

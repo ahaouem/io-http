@@ -34,16 +34,20 @@ func TestUpdateNonExistentUser(t *testing.T) {
     assert.Equal(t, http.StatusNotFound, rr.Code)
 }
 
-func TestValidUserUpdate(t *testing.T) {
-    router := testRouter()
-    validUserID := 1
+func TestUnitValidUserUpdate(t *testing.T) {
+    validUserID := 34
     updateData := map[string]interface{}{
         "name": "Updated Name",
     }
     updateDataBytes, _ := json.Marshal(updateData)
     req, _ := http.NewRequest("PUT", "/users/"+strconv.Itoa(validUserID), bytes.NewBuffer(updateDataBytes))
     rr := httptest.NewRecorder()
-    router.ServeHTTP(rr, req)
+
+    rctx := chi.NewRouteContext()
+    rctx.URLParams.Add("id", strconv.Itoa(validUserID))
+    req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+    UpdateUser(rr, req)
 
     assert.Equal(t, http.StatusNoContent, rr.Code)
     

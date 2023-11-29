@@ -34,21 +34,21 @@ func TestGetUserByIDSuccess(t *testing.T) {
 	
 }
 
-func TestGetUserByIDInvalidID(t *testing.T) {
-	router := testRouterForGetUserByID()
-
+func TestUnitGetUserByIDInvalidID(t *testing.T) {
+	
 	req, _ := http.NewRequest("GET", "/users/invalidID", nil)
 	rr := httptest.NewRecorder()
-	router.ServeHTTP(rr, req)
+	GetUserByID(rr, req)
 
 	assert.Equal(t, http.StatusBadRequest, rr.Code)
 }
 
-func TestGetUserByIDNonExistentUser(t *testing.T) {
-	router := testRouterForGetUserByID()
+func TestUnitGetUserByIDNonExistentUser(t *testing.T) {
+	
 	nonExistentUserID := 999
 	req, _ := http.NewRequest("GET", "/users/"+strconv.Itoa(nonExistentUserID), nil)
 	rr := httptest.NewRecorder()
-	router.ServeHTTP(rr, req)
+	GetUserByID(rr, req)
 	assert.Equal(t, http.StatusInternalServerError, rr.Code)
 }
+

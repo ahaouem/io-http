@@ -30,3 +30,16 @@ func TestGetUsersSuccess(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+
+func TestUnitGetUsers(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/users", nil)
+	rr := httptest.NewRecorder()
+
+	GetUsers(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+	var users []User
+	err := json.Unmarshal(rr.Body.Bytes(), &users)
+	assert.NoError(t, err)
+}
