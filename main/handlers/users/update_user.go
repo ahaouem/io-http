@@ -20,7 +20,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid user ID", http.StatusBadRequest)
         return
     }
-    
+
     var updates map[string]interface{}
     err = json.NewDecoder(r.Body).Decode(&updates)
     if err != nil {
@@ -55,23 +55,5 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    
-    user := User{
-        ID: userID, 
-    }
-    
-    for key, value := range updates {
-        switch key {
-        case "name":
-            user.Name = value.(string)
-        case "lastname":
-            user.Lastname = value.(string)
-        }
-    }
-
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    if err := json.NewEncoder(w).Encode(user); err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-    }
+    w.WriteHeader(http.StatusNoContent)
 }

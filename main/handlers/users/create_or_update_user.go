@@ -38,9 +38,8 @@ func CreateUserOrUpdate(w http.ResponseWriter, r *http.Request) {
                 http.Error(w, "Failed to create new user: "+err.Error(), http.StatusInternalServerError)
                 return
             }
-            user.Name = userInput.Name
-            user.Lastname = userInput.Lastname
             w.WriteHeader(http.StatusCreated)
+            return
         } else {
             http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
             return
@@ -51,12 +50,6 @@ func CreateUserOrUpdate(w http.ResponseWriter, r *http.Request) {
             http.Error(w, "Failed to update user: "+err.Error(), http.StatusInternalServerError)
             return
         }
-        user.ID = userID
-        user.Name = userInput.Name
-        user.Lastname = userInput.Lastname
-        w.WriteHeader(http.StatusOK)
+        w.WriteHeader(http.StatusNoContent)
     }
-
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(user)
 }
